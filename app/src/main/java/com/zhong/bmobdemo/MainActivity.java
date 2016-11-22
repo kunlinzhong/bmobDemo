@@ -2,6 +2,8 @@ package com.zhong.bmobdemo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.zhong.tool.Latlng;
 import com.zhong.tool.Person;
 
 import org.json.JSONArray;
@@ -60,7 +63,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bmobquery_btn.setOnClickListener(this);
         update_btn.setOnClickListener(this);
         delete_btn.setOnClickListener(this);
-        setUp();
+//        setUp();
+        new Thread(new ThreadShow()).start();
     }
 
     private void setUp() {
@@ -79,14 +83,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
         mLocationOption.setOnceLocationLatest(true);
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
-        mLocationOption.setInterval(1000);
+        mLocationOption.setInterval(2000);
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //设置是否强制刷新WIFI，默认为true，强制刷新。
         mLocationOption.setWifiActiveScan(false);
         //给定位客户端对象设置定位参数
         mLocationClient.setLocationOption(mLocationOption);
-//启动定位
+        //启动定位
         mLocationClient.startLocation();
     }
     //声明定位回调监听器
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (aMapLocation != null) {
                 if (aMapLocation.getErrorCode() == 0) {
                     //可在其中解析amapLocation获取相应内容。
+                    saveLatlngData(String.valueOf(aMapLocation.getLatitude()),String.valueOf(aMapLocation.getLongitude()),aMapLocation.getAddress());
                     Log.e("getErrorCode", "ErrorCode is 0");
                     Log.e("getLatitude  getLongitude",aMapLocation.getLatitude()+"---"+aMapLocation.getLongitude());
                     Log.e(" getAddress", aMapLocation.getAddress());
@@ -106,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("AmapError","location Error, ErrCode:"
                             + aMapLocation.getErrorCode() + ", errInfo:"
                             + aMapLocation.getErrorInfo());
+                    saveLatlngData("latitude","longitude","address");
                 }
             }else{
                 Log.e("aMapLocation", "aMapLocation is null");
@@ -141,6 +147,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+    public void saveLatlngData(String latitude,String longitude,String address) {
+        Latlng latlng = new Latlng();
+        latlng.setLatitude(latitude);
+        latlng.setLongitude(longitude);
+        latlng.setAddress(address);
+        latlng.save(new SaveListener<String>() {
+            @Override
+            public void done(String objectId,BmobException e) {
+                if(e==null){
+                    Toast.makeText(con,"添加数据成功，返回objectId为："+objectId,Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(con,"创建数据失败：" + e.getMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
     public void saveData() {
         number++;
         Person p2 = new Person();
@@ -247,5 +270,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         });
+    }
+
+    // handler类接收数据
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                setUp();
+                System.out.println("getLocation");
+            }
+        };
+    };
+
+    // 线程类
+    class ThreadShow implements Runnable {
+
+        @Override
+        public void run() {
+            // TODO Auto-generated method stub
+            while (true) {
+                try {
+                    Thread.sleep(1000*60);
+                    Message msg = new Message();
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                    System.out.println("send...");
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    System.out.println("thread error...");
+                }
+            }
+        }
     }
 }
