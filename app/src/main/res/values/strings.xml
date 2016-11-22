@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">BmobDemo</string>
     <string name="bmob_application_id">b375519e7f5e61ad47a9fa8f0f49864e</string>
+    <string name="lbs_map_key">155807d59544aa0829dbe9ee48ebb4a5</string>
     <string name="save">添加一行数据</string>
     <string name="query">获取一行数据</string>
     <string name="bmobquery">获取object数据</string>
