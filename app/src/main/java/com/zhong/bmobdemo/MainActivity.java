@@ -2,10 +2,13 @@ package com.zhong.bmobdemo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +20,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.zhong.tool.Latlng;
 import com.zhong.tool.Person;
+import com.zhong.tool.getLocation;
 
 import org.json.JSONArray;
 
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public AMapLocationClient mLocationClient = null;
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
+    private String deviceId;
 
 
 
@@ -48,7 +53,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bmob.initialize(this, getResources().getString(R.string.bmob_application_id));
         setContentView(R.layout.activity_main);
         con = MainActivity.this;
-        initView();
+        deviceId =((TelephonyManager) con.getSystemService(TELEPHONY_SERVICE)).getDeviceId();
+//        Log.e("deviceId--->",deviceId);
+        SharedPreferences sp = this.getSharedPreferences("config",0);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("deviceId", deviceId);
+        editor.commit();
+        Intent serviceIntent = new Intent(con, MyService.class);
+        startService(serviceIntent);
+
+//        new getLocation(con).getLocation();
+//        initView();
 //        getData();
     }
 
@@ -87,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //设置是否强制刷新WIFI，默认为true，强制刷新。
-        mLocationOption.setWifiActiveScan(false);
+//        mLocationOption.setWifiActiveScan(false);
         //给定位客户端对象设置定位参数
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
@@ -99,10 +114,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
 
+            Latlng latlng = new Latlng();
             if (aMapLocation != null) {
                 if (aMapLocation.getErrorCode() == 0) {
                     //可在其中解析amapLocation获取相应内容。
-                    saveLatlngData(String.valueOf(aMapLocation.getLatitude()),String.valueOf(aMapLocation.getLongitude()),aMapLocation.getAddress());
+                    latlng.setDeviceId(deviceId);
+                    latlng.setLatitude(String.valueOf(aMapLocation.getLatitude()));
+                    latlng.setLongitude(String.valueOf(aMapLocation.getLongitude()));
+                    latlng.setAddress(aMapLocation.getAddress());
+                    latlng.setLocationStatus("success");
+//                    saveLatlngData(String.valueOf(aMapLocation.getLatitude()),String.valueOf(aMapLocation.getLongitude()),aMapLocation.getAddress());
                     Log.e("getErrorCode", "ErrorCode is 0");
                     Log.e("getLatitude  getLongitude",aMapLocation.getLatitude()+"---"+aMapLocation.getLongitude());
                     Log.e(" getAddress", aMapLocation.getAddress());
@@ -111,12 +132,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("AmapError","location Error, ErrCode:"
                             + aMapLocation.getErrorCode() + ", errInfo:"
                             + aMapLocation.getErrorInfo());
-                    saveLatlngData("latitude","longitude","address");
+                    latlng.setDeviceId(deviceId);
+                    latlng.setLatitude("ErrCode:"+ aMapLocation.getErrorCode());
+                    latlng.setLongitude("ErrCode:"+ aMapLocation.getErrorCode());
+                    latlng.setAddress("errInfo:"+ aMapLocation.getErrorInfo());
+                    latlng.setLocationStatus("fail");
+//                    saveLatlngData("latitude","longitude","address");
                 }
             }else{
+//                saveLatlngData("latitude is null","longitude is null","address is null");
+                latlng.setDeviceId(deviceId);
+                latlng.setLatitude("latitude is null");
+                latlng.setLongitude("longitude is null");
+                latlng.setAddress("address is null");
+                latlng.setLocationStatus("location is null");
                 Log.e("aMapLocation", "aMapLocation is null");
             }
-
+            saveLatlngData(latlng);
         }
     };
 
@@ -147,11 +179,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-    public void saveLatlngData(String latitude,String longitude,String address) {
+    public void saveLatlngData(Latlng mlatlng) {
         Latlng latlng = new Latlng();
-        latlng.setLatitude(latitude);
-        latlng.setLongitude(longitude);
-        latlng.setAddress(address);
+        latlng.setLatitude(mlatlng.getLatitude());
+        latlng.setLongitude(mlatlng.getLongitude());
+        latlng.setAddress(mlatlng.getAddress());
+        latlng.setDeviceId(mlatlng.getDeviceId());
+        latlng.setLocationStatus(mlatlng.getLocationStatus());
         latlng.save(new SaveListener<String>() {
             @Override
             public void done(String objectId,BmobException e) {
@@ -290,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // TODO Auto-generated method stub
             while (true) {
                 try {
-                    Thread.sleep(1000*60);
+                    Thread.sleep(1000*10);
                     Message msg = new Message();
                     msg.what = 1;
                     handler.sendMessage(msg);
