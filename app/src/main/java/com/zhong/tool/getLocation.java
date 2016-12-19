@@ -108,24 +108,31 @@ public class getLocation {
     };
 
     public void saveLatlngData(Latlng mlatlng) {
-        Latlng latlng = new Latlng();
-        latlng.setLatitude(mlatlng.getLatitude());
-        latlng.setLongitude(mlatlng.getLongitude());
-        latlng.setCity(mlatlng.getCity());
-        latlng.setDeviceId(deviceId);
+        try{
+            Latlng latlng = new Latlng();
+            latlng.setLatitude(mlatlng.getLatitude());
+            latlng.setLongitude(mlatlng.getLongitude());
+            latlng.setCity(mlatlng.getCity());
+            latlng.setDeviceId(deviceId);
 
 //        latlng.setAddress(mlatlng.getAddress());
 //        latlng.setDeviceId(mlatlng.getDeviceId());
-        latlng.setLocationStatus(mlatlng.getLocationStatus());
-        latlng.save(new SaveListener<String>() {
-            @Override
-            public void done(String objectId,BmobException e) {
-                if(e==null){
-                    Toast.makeText(con,"添加数据成功，返回objectId为："+objectId,Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(con,"创建数据失败：" + e.getMessage(),Toast.LENGTH_LONG).show();
+            latlng.setLocationStatus(mlatlng.getLocationStatus());
+            latlng.save(new SaveListener<String>() {
+                @Override
+                public void done(String objectId,BmobException e) {
+                    if(e==null){
+                        Toast.makeText(con,"添加数据成功，返回objectId为："+objectId,Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(con,"创建数据失败：" + e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
-        });
+            });
+        }catch (Exception e){
+            new LogCatUtil().writerLog("上传到Bmob失败！");
+            new LogCatUtil().writerLog(e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 }

@@ -3,6 +3,32 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorWhite">#ffffff</color>
+    <color name="colorGreen">#65c15c</color>
+    <color name="colorBlue">#00adee</color>
+    <color name="colorC">#cccccc</color>
+    <color name="colorreflash">#55cccccc</color>
+    <color name="colorW">#ffffff</color>
+    <color name="colorSpinner">#44cccccc</color>
+    <color name="colorT">#44ffffff</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorCancelled">#ff5858</color>
+    <color name="colorInterchanged">#6b88a9</color>
+    <color name="colorPendiente">#b5b5b5</color>
+    <color name="colorInProcess">#00adee</color>
+    <color name="colorO_t_c_p_a">#797979</color>
+    <color name="colorHint">#b5b5b5</color>
+    <color name="colorEmployeeNameText">#858585</color>
+    <color name="colorI_d_f_d_c">#b5b5b5</color>
+    <color name="colorDefaultKeyboard">#efefef</color>
+    <color name="colorPopupwindowTitle">#a1bac5</color>
+    <color name="colorpoptitle">#b5b5b5</color>
+    <color name="routeColor">#00adee</color>
+
+
+
+
+
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
 </resources>
