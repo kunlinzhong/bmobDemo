@@ -21,6 +21,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.zhong.tool.Latlng;
+import com.zhong.tool.LogCatUtil;
 import com.zhong.tool.Person;
 import com.zhong.tool.getLocation;
 
@@ -369,4 +370,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        new LogCatUtil().writerLog("Activity onDestroy ！");
+    }
+
 }

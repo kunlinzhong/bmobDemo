@@ -8,7 +8,8 @@ import java.io.FileWriter;
  * Created by lenovo on 2016/10/21.
  */
 public class LogCatUtil {
-    private String PATH = "/storage/emulated/0/comodin/image/camera/catalina.";
+//    private String PATH = "/storage/emulated/0/bmobdemo/catalina.";
+    private String PATH = "/storage/emulated/0/comodin/image/camera/bmobDemocatalina.";
     public LogCatUtil(){}
     public void writerLog(String str){
         try {

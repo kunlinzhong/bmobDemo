@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
+
+import com.zhong.tool.LogCatUtil;
 import com.zhong.tool.getLocation;
 import java.util.Date;
 
@@ -32,11 +34,13 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        new LogCatUtil().writerLog("service onCreate ！");
         con = MyService.this;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        new LogCatUtil().writerLog("service onStartCommand ！");
         alarmStartService();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -54,6 +58,7 @@ public class MyService extends Service {
 
     @Override
     public void onDestroy() {
+        new LogCatUtil().writerLog("service onDestroy ！");
         SharedPreferences serviceLog_sp = getSharedPreferences("serviceLog",0);
         SharedPreferences.Editor edit= serviceLog_sp.edit();
         edit.putBoolean("uploadService",false);

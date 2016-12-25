@@ -122,15 +122,17 @@ public class getLocation {
                 @Override
                 public void done(String objectId,BmobException e) {
                     if(e==null){
-                        Toast.makeText(con,"添加数据成功，返回objectId为："+objectId,Toast.LENGTH_LONG).show();
+//                        Toast.makeText(con,"添加数据成功，返回objectId为："+objectId,Toast.LENGTH_LONG).show();
+                        new LogCatUtil().writerLog("Bmob上传成功！  "+ objectId);
                     }else{
-                        Toast.makeText(con,"创建数据失败：" + e.getMessage(),Toast.LENGTH_LONG).show();
+//                        Toast.makeText(con,"创建数据失败：" + e.getMessage(),Toast.LENGTH_LONG).show();
+                        new LogCatUtil().writerLog("创建数据失败  "+ e.getErrorCode()+"   "+e.getMessage());
                     }
                 }
             });
+
         }catch (Exception e){
-            new LogCatUtil().writerLog("上传到Bmob失败！");
-            new LogCatUtil().writerLog(e.getMessage());
+            new LogCatUtil().writerLog("Bmob上传失败！  "+e.getMessage()+"     "+e.getLocalizedMessage());
             e.printStackTrace();
         }
 
